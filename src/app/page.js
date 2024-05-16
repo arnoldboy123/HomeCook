@@ -1,76 +1,83 @@
 'use client'
 
-import Image from "next/image";
 import React, { useState } from "react";
 
-export default function Home() {
+function App() {
+  // State for sliders
+  const [budgetPerWeek, setBudgetPerWeek] = useState(40); // Example initial value
+  const [timePerNight, setTimePerNight] = useState(40); // Example initial value
+
+  // State for choices
+  const cuisineOptions = ["Chinese", "Korean", "Japanese"];
+  const dietaryOptions = ["Vegetarian", "Vegan", "Pescatarian", "Gluten-free"];
+  const initialCuisineState = cuisineOptions.reduce((acc, option) => ({ ...acc, [option]: false }), {});
+  const initialDietaryState = dietaryOptions.reduce((acc, option) => ({ ...acc, [option]: false }), {});
+  const [cuisineChoices, setCuisineChoices] = useState(initialCuisineState);
+  const [dietaryRequirements, setDietaryRequirements] = useState(initialDietaryState);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = {
+      budgetPerWeek,
+      timePerNight,
+      cuisineChoices,
+      dietaryRequirements,
+    };
+    console.log(formData); // Here you can store the data as needed
+  };
+
   return (
-    <html data-theme="cupcake">        
-      <section>
-        <h1>Your ultimate digital Sous Chef helping you get into the habit of cooking</h1>
-        <p>Some copy about how hello fresh is inconvenient, you want to find recipes tailored to you, don't wanna crawl through a bunch of SEO paragraphs blah blah blah</p>
-      </section>
-      <section>
-        <form>
-          <p>What's your budget for cooking per week?</p>
-          <Slider />
-          <p>How much time do you have for cooking per night?</p>
-          <Slider />
-          <p>What cuisines are your favourite</p>
-          <Choices options={["Chinese", "Korean", "Japanese"]}/>
-          <p>Do you have any dietary requirements?</p>
-          <Choices options={["Vegetarian", "Vegan", "Pescatarian", "Gluten-free"]}/>
-          <button class="btn btn-primary" onClick={(e) => e.preventDefault()}>Suggest recipes</button>
-        </form>
-      </section>
-    </html>
+    <form>
+      <p>What's your budget for cooking per week?</p>
+      <Slider value={budgetPerWeek} onChange={setBudgetPerWeek} />
+      <p>How much time do you have for cooking per night?</p>
+      <Slider value={timePerNight} onChange={setTimePerNight} />
+      <p>What cuisines are your favourite?</p>
+      <Choices options={cuisineOptions} choices={cuisineChoices} setChoices={setCuisineChoices} />
+      <p>Do you have any dietary requirements?</p>
+      <Choices options={dietaryOptions} choices={dietaryRequirements} setChoices={setDietaryRequirements} />
+      <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Suggest recipes</button>
+    </form>
   );
 }
 
-function Choices({ options }) {
-  // Assuming options is defined and passed correctly as shown in previous examples
-  const initialState = options.reduce((acc, option) => {
-    acc[option] = false; // false indicates inactive, true indicates active
-    return acc;
-  }, {});
-
-  const [choices, setChoices] = useState(initialState);
-
-  const handleClick = (e) => {
+function Choices({ options, choices, setChoices }) {
+  const handleClick = (option, e) => {
     e.preventDefault();
-    const choiceId = e.target.id;
     setChoices(prevChoices => ({
       ...prevChoices,
-      [choiceId]: !prevChoices[choiceId] // Toggle the state
+      [option]: !prevChoices[option] // Toggle the state
     }));
   };
 
   return (
     <div>
-      {Object.entries(choices).map(([choice, isSelected]) => (
+      {options.map((option) => (
         <button
-          key={choice}
-          className={`btn ${isSelected ? 'btn-active' : ''}`} // Dynamically set class
-          id={choice}
-          onClick={handleClick}
+          key={option}
+          className={`btn ${choices[option] ? 'btn-active' : ''}`} // Dynamically set class
+          onClick={(e) => handleClick(option, e)}
         >
-          {choice}
+          {option}
         </button>
       ))}
     </div>
   );
 }
 
-function Slider() {
-  const [value, setValue] = useState(40)
-
-  const handleChange = (e) => {
-    setValue(e.target.value)
-  }
-
+function Slider({ value, onChange }) {
   return (
-    <div class = "slidercontainer">
-    <input type="range" min="0" max="100" value={value} className="range range-accent" onChange={handleChange}/>
-  </div>
-  )
+    <div className="slidercontainer">
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value={value}
+        className="range range-accent"
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </div>
+  );
 }
+
+export default App;
