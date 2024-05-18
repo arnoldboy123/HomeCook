@@ -1,6 +1,8 @@
 'use client'
 
 import React, { useState } from "react";
+import OpenAI from "openai";
+
 
 function App() {
   // State for sliders
@@ -15,7 +17,7 @@ function App() {
   const [cuisineChoices, setCuisineChoices] = useState(initialCuisineState);
   const [dietaryRequirements, setDietaryRequirements] = useState(initialDietaryState);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
       budgetPerWeek,
@@ -24,6 +26,20 @@ function App() {
       dietaryRequirements,
     };
     console.log(formData); // Here you can store the data as needed
+
+    const openai = new OpenAI({
+      apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+      project: process.env.NEXT_PUBLIC_OPENAI_PROJECT_ID,
+      dangerouslyAllowBrowser: true,
+    });
+
+    const chatCompletion = await openai.chat.completions.create({
+      messages: [{ role: "user", content: "Say this is a test" }],
+      model: "gpt-3.5-turbo",
+    });
+
+    // Log the response when it is completed
+    console.log(chatCompletion.choices[0].message.content);
   };
 
   return (
