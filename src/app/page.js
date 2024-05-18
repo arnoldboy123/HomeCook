@@ -33,8 +33,11 @@ function App() {
       dangerouslyAllowBrowser: true,
     });
 
+    // Make prompt based on form data
+    const prompt = `Budget: £${budgetPerWeek}, Time: ${timePerNight} minutes, Cuisine: ${Object.keys(cuisineChoices).filter((cuisine) => cuisineChoices[cuisine]).join(", ")}, Dietary requirements: ${Object.keys(dietaryRequirements).filter((dietary) => dietaryRequirements[dietary]).join(", ")}`;
+
     const chatCompletion = await openai.chat.completions.create({
-      messages: [{ role: "user", content: "Say this is a test" }],
+      messages: [{ role: "user", content: prompt }],
       model: "gpt-3.5-turbo",
     });
 
