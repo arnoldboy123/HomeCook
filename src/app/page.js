@@ -16,6 +16,7 @@ function App() {
   const initialDietaryState = dietaryOptions.reduce((acc, option) => ({ ...acc, [option]: false }), {});
   const [cuisineChoices, setCuisineChoices] = useState(initialCuisineState);
   const [dietaryRequirements, setDietaryRequirements] = useState(initialDietaryState);
+  const [isMealPrepping, setIsMealPrepping] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +25,7 @@ function App() {
       timePerNight,
       cuisineChoices,
       dietaryRequirements,
+      isMealPrepping
     };
     console.log(formData); // Here you can store the data as needed
 
@@ -59,6 +61,12 @@ function App() {
       <Choices options={cuisineOptions} choices={cuisineChoices} setChoices={setCuisineChoices} />
       <p>Do you have any dietary requirements?</p>
       <Choices options={dietaryOptions} choices={dietaryRequirements} setChoices={setDietaryRequirements} />
+      <p>Are you meal prepping for the next day?</p>
+      <label class="cursor-pointer label">
+        <span class="label-text">No</span> 
+        <input type="checkbox" class="toggle toggle-primary" onChange={(e) => setIsMealPrepping(!isMealPrepping)} />
+        <span class="label-text">Yes</span> 
+      </label>
       <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Suggest recipes</button>
     </form>
   );
