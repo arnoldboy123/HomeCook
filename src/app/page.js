@@ -37,7 +37,11 @@ function App() {
     const prompt = `Budget: £${budgetPerWeek}, Time: ${timePerNight} minutes, Cuisine: ${Object.keys(cuisineChoices).filter((cuisine) => cuisineChoices[cuisine]).join(", ")}, Dietary requirements: ${Object.keys(dietaryRequirements).filter((dietary) => dietaryRequirements[dietary]).join(", ")}`;
 
     const chatCompletion = await openai.chat.completions.create({
-      messages: [{ role: "user", content: prompt }],
+      messages: [
+        { role: "system", content: "You are a recipe assistant designed to output JSON of shape {meals: Array[]{name: string, steps: string, cost_in_pound: integer, time_in_mins_to_cook: integer}}" },
+        { role: "user", content: prompt }
+      ],
+      response_format: {"type": "json_object"},
       model: "gpt-3.5-turbo",
     });
 
