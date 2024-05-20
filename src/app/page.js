@@ -43,11 +43,11 @@ function App() {
     const numCookingDays = Object.values(cookingDays).filter((day) => day).length;
 
     // Make prompt based on form data
-    const prompt = `Give me ${numCookingDays} recipes, Budget: £${budgetPerWeek}, Time: ${timePerNight} minutes per night, ${isMealPrepping ? "2 servings" : "1 serving"} pre recipe, Cuisine: ${Object.keys(cuisineChoices).filter((cuisine) => cuisineChoices[cuisine]).join(", ")}, Dietary requirements: ${Object.keys(dietaryRequirements).filter((dietary) => dietaryRequirements[dietary]).join(", ")}`;
+    const prompt = `Give me ${numCookingDays} recipes, Budget: £${budgetPerWeek}, Time: ${timePerNight} minutes per night, ${isMealPrepping ? "2 servings" : "1 serving"} per recipe, Cuisine: ${Object.keys(cuisineChoices).filter((cuisine) => cuisineChoices[cuisine]).join(", ")}, Dietary requirements: ${Object.keys(dietaryRequirements).filter((dietary) => dietaryRequirements[dietary]).join(", ")}`;
 
     const chatCompletion = await openai.chat.completions.create({
       messages: [
-        { role: "system", content: "You are a recipe assistant designed to output JSON of shape {recipes: Array[]{name: string, steps: string, cost_in_pound: integer, time_in_mins_to_cook: integer, portions: integer}}" },
+        { role: "system", content: "You are a recipe assistant designed to output JSON of shape {recipes: Array[]{name: string, steps: string, cost_in_pound: integer, ingredients[]: {ingredient: string, amount: string} , time_in_mins_to_cook: integer, portions: integer}}" },
         { role: "user", content: prompt }
       ],
       response_format: {"type": "json_object"},
