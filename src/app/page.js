@@ -12,10 +12,13 @@ function App() {
   // State for choices
   const cuisineOptions = ["Chinese", "Korean", "Japanese"];
   const dietaryOptions = ["Vegetarian", "Vegan", "Pescatarian", "Gluten-free"];
+  const daysToCook = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const initialCuisineState = cuisineOptions.reduce((acc, option) => ({ ...acc, [option]: false }), {});
   const initialDietaryState = dietaryOptions.reduce((acc, option) => ({ ...acc, [option]: false }), {});
+  const initialCookingDays = daysToCook.reduce((acc, option) => ({ ...acc, [option]: false }), {});
   const [cuisineChoices, setCuisineChoices] = useState(initialCuisineState);
   const [dietaryRequirements, setDietaryRequirements] = useState(initialDietaryState);
+  const [cookingDays, setCookingDays] = useState(initialCookingDays);
   const [isMealPrepping, setIsMealPrepping] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -24,6 +27,7 @@ function App() {
       budgetPerWeek,
       timePerNight,
       cuisineChoices,
+      cookingDays,
       dietaryRequirements,
       isMealPrepping
     };
@@ -35,12 +39,15 @@ function App() {
       dangerouslyAllowBrowser: true,
     });
 
+    // number of cooking days that is true
+    const numCookingDays = Object.values(cookingDays).filter((day) => day).length;
+
     // Make prompt based on form data
-    const prompt = `Budget: £${budgetPerWeek}, Time: ${timePerNight} minutes, Cuisine: ${Object.keys(cuisineChoices).filter((cuisine) => cuisineChoices[cuisine]).join(", ")}, Dietary requirements: ${Object.keys(dietaryRequirements).filter((dietary) => dietaryRequirements[dietary]).join(", ")}`;
+    const prompt = `Give me ${numCookingDays} recipes, Budget: £${budgetPerWeek}, Time: ${timePerNight} minutes per night, ${isMealPrepping ? "2 servings" : "1 serving"} pre recipe, Cuisine: ${Object.keys(cuisineChoices).filter((cuisine) => cuisineChoices[cuisine]).join(", ")}, Dietary requirements: ${Object.keys(dietaryRequirements).filter((dietary) => dietaryRequirements[dietary]).join(", ")}`;
 
     const chatCompletion = await openai.chat.completions.create({
       messages: [
-        { role: "system", content: "You are a recipe assistant designed to output JSON of shape {meals: Array[]{name: string, steps: string, cost_in_pound: integer, time_in_mins_to_cook: integer}}" },
+        { role: "system", content: "You are a recipe assistant designed to output JSON of shape {recipes: Array[]{name: string, steps: string, cost_in_pound: integer, time_in_mins_to_cook: integer, portions: integer}}" },
         { role: "user", content: prompt }
       ],
       response_format: {"type": "json_object"},
@@ -61,6 +68,8 @@ function App() {
       <Choices options={cuisineOptions} choices={cuisineChoices} setChoices={setCuisineChoices} />
       <p>Do you have any dietary requirements?</p>
       <Choices options={dietaryOptions} choices={dietaryRequirements} setChoices={setDietaryRequirements} />
+      <p>What days are you cooking?</p>
+      <Choices options={daysToCook} choices={cookingDays} setChoices={setCookingDays} />
       <p>Are you meal prepping for the next day?</p>
       <label class="cursor-pointer label">
         <span class="label-text">No</span> 
