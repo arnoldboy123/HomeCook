@@ -20,6 +20,7 @@ function App() {
   const [dietaryRequirements, setDietaryRequirements] = useState(initialDietaryState);
   const [cookingDays, setCookingDays] = useState(initialCookingDays);
   const [isMealPrepping, setIsMealPrepping] = useState(false);
+  const [previousRecipe, setPreviousRecipe] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,8 +43,11 @@ function App() {
     // number of cooking days that is true
     const numCookingDays = Object.values(cookingDays).filter((day) => day).length;
 
+    // Check if previous recipe is '', if not, add to prompt
+    const previousRecipePrompt = previousRecipe != '' ? `Don't recommend these: ${previousRecipe}.` : '';
+
     // Make prompt based on form data
-    const prompt = `Give me ${numCookingDays} recipes, Budget: £${budgetPerWeek}, Time: ${timePerNight} minutes per night, ${isMealPrepping ? "2 servings" : "1 serving"} per recipe, Cuisine: ${Object.keys(cuisineChoices).filter((cuisine) => cuisineChoices[cuisine]).join(", ")}, Dietary requirements: ${Object.keys(dietaryRequirements).filter((dietary) => dietaryRequirements[dietary]).join(", ")}`;
+    const prompt = `Give me ${numCookingDays} recipes, Budget: £${budgetPerWeek}, Time: ${timePerNight} minutes per night, ${isMealPrepping ? "2 servings" : "1 serving"} per recipe, Cuisine: ${Object.keys(cuisineChoices).filter((cuisine) => cuisineChoices[cuisine]).join(", ")}, Dietary requirements: ${Object.keys(dietaryRequirements).filter((dietary) => dietaryRequirements[dietary]).join(", ")}, ${previousRecipePrompt}`;
 
     const chatCompletion = await openai.chat.completions.create({
       messages: [
@@ -53,6 +57,8 @@ function App() {
       response_format: {"type": "json_object"},
       model: "gpt-3.5-turbo",
     });
+
+    // TODO: Try not to recommend the same thing again
 
     // Log the response when it is completed
     console.log(chatCompletion.choices[0].message.content);
