@@ -21,6 +21,9 @@ function App() {
   // State for loading
   const [isLoading, setIsLoading] = useState(false)
 
+  // State for the suggested recipes
+  const [suggestedRecipes, setSuggestedRecipes] = useState('')
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
@@ -57,6 +60,7 @@ function App() {
         model: "gpt-3.5-turbo",
       });
 
+      setSuggestedRecipes(chatCompletion.choices[0].message.content)
       console.log(chatCompletion.choices[0].message.content);
     } catch(error) {
       console.log(error)
@@ -86,8 +90,15 @@ function App() {
       <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Suggest recipes</button>
       
       {isLoading && <div><p>Chef is cooking up your recipe</p><span className="loading loading-spinner loading-md"></span></div>}
+      <RecipeCard isLoading={isLoading} suggestedRecipes={suggestedRecipes} ></RecipeCard>
     </form>
   );
+}
+
+function RecipeCard({isLoading, suggestedRecipes}) {
+  if (!isLoading && suggestedRecipes != '') {
+    return <p>${suggestedRecipes}</p>
+  }
 }
 
 function Choices({ options, choices, setChoices }) {
