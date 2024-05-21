@@ -61,7 +61,6 @@ function App() {
       });
 
       setSuggestedRecipes(chatCompletion.choices[0].message.content)
-      console.log(chatCompletion.choices[0].message.content);
     } catch(error) {
       console.log(error)
     } finally {
@@ -90,14 +89,18 @@ function App() {
       <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Suggest recipes</button>
       
       {isLoading && <div><p>Chef is cooking up your recipe</p><span className="loading loading-spinner loading-md"></span></div>}
-      <RecipeCard isLoading={isLoading} suggestedRecipes={suggestedRecipes} ></RecipeCard>
+      <RecipeCards isLoading={isLoading} suggestedRecipes={suggestedRecipes} ></RecipeCards>
     </form>
   );
 }
 
-function RecipeCard({isLoading, suggestedRecipes}) {
+function RecipeCards({isLoading, suggestedRecipes}) {
   if (!isLoading && suggestedRecipes != '') {
-    return <p>${suggestedRecipes}</p>
+    // convert string to JSON
+    const recipes = JSON.parse(suggestedRecipes);
+
+    // Extract the recipe details
+    return <div>${suggestedRecipes}</div>
   }
 }
 
