@@ -10,7 +10,7 @@ function App() {
   const [timePerNight, setTimePerNight] = useState(40); // Example initial value
 
   // State for choices
-  const cuisineOptions = ["Chinese", "Korean", "Japanese"];
+  const cuisineOptions = ["Chinese", "Japanese", "Korean"];
   const dietaryOptions = ["Vegetarian", "Vegan", "Pescatarian", "Gluten-free"];
   const daysToCook = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const initialCuisineState = cuisineOptions.reduce((acc, option) => ({ ...acc, [option]: false }), {});
@@ -20,7 +20,6 @@ function App() {
   const [dietaryRequirements, setDietaryRequirements] = useState(initialDietaryState);
   const [cookingDays, setCookingDays] = useState(initialCookingDays);
   const [isMealPrepping, setIsMealPrepping] = useState(false);
-  const [previousRecipe, setPreviousRecipe] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,11 +42,8 @@ function App() {
     // number of cooking days that is true
     const numCookingDays = Object.values(cookingDays).filter((day) => day).length;
 
-    // Check if previous recipe is '', if not, add to prompt
-    const previousRecipePrompt = previousRecipe != '' ? `Don't recommend these: ${previousRecipe}.` : '';
-
     // Make prompt based on form data
-    const prompt = `Give me ${numCookingDays} recipes, Budget: £${budgetPerWeek}, Time: ${timePerNight} minutes per night, ${isMealPrepping ? "2 servings" : "1 serving"} per recipe, Cuisine: ${Object.keys(cuisineChoices).filter((cuisine) => cuisineChoices[cuisine]).join(", ")}, Dietary requirements: ${Object.keys(dietaryRequirements).filter((dietary) => dietaryRequirements[dietary]).join(", ")}, ${previousRecipePrompt}`;
+    const prompt = `Give me ${numCookingDays} recipes, Budget: £${budgetPerWeek}, Time: ${timePerNight} minutes per night, ${isMealPrepping ? "2 servings" : "1 serving"} per recipe, Cuisine: ${Object.keys(cuisineChoices).filter((cuisine) => cuisineChoices[cuisine]).join(", ")}, Dietary requirements: ${Object.keys(dietaryRequirements).filter((dietary) => dietaryRequirements[dietary]).join(", ")}`;
 
     const chatCompletion = await openai.chat.completions.create({
       messages: [
