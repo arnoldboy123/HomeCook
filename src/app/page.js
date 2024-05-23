@@ -56,6 +56,7 @@ function App() {
         ],
         response_format: {"type": "json_object"},
         model: "gpt-3.5-turbo",
+        temperature: 1.3
       });
 
       setSuggestedRecipes(chatCompletion.choices[0].message.content)
@@ -105,8 +106,6 @@ function RecipeCards({isLoading, suggestedRecipes}) {
           ))}
         </ul>
         <p>Time to Cook: {recipe.time_in_mins_to_cook} minutes</p>
-        <br></br>
-        <br></br>
       </div>
     ));
 
