@@ -64,7 +64,9 @@ function App() {
       setIsLoading(false)
     }
 
-    // TODO: Figure out a way to make chatGPT less likely to recommend the same thing
+    // TODO1: Make the ingredient shopping list exportable to google keep
+    // TODO2: Explore using langchain to make a contextual bot which always ensure the JSON format is correct
+    // TODO3: Explore using langchain to make a contextual bot which won't repeat the same recipe
   };
 
   return (
