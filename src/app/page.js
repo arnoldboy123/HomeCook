@@ -33,7 +33,6 @@ function App() {
       dietaryRequirements,
       isMealPrepping
     };
-    console.log(formData); // Here you can store the data as needed
 
     setIsLoading(true) // Onclick, the loading spinner starts
 
@@ -50,7 +49,6 @@ function App() {
     const prompt = `Give me ${numCookingDays} recipes, Budget: £${budgetPerWeek}, Time: ${timePerNight} minutes per night, ${isMealPrepping ? "2 servings" : "1 serving"} per recipe, Dietary requirements: ${Object.keys(dietaryRequirements).filter((dietary) => dietaryRequirements[dietary]).join(", ")}`;
 
     try {
-      console.log(prompt)
       const chatCompletion = await openai.chat.completions.create({
         messages: [
           { role: "system", content: "You are a recipe assistant designed to output JSON of shape {recipes: Array[]{name: string, steps: string, cost_in_pound: integer, ingredients[]: {ingredient: string, amount: string} , time_in_mins_to_cook: integer, portions: integer}}" },
@@ -61,8 +59,6 @@ function App() {
       });
 
       setSuggestedRecipes(chatCompletion.choices[0].message.content)
-    } catch(error) {
-      console.log(error)
     } finally {
       setIsLoading(false)
     }
@@ -97,10 +93,25 @@ function App() {
 function RecipeCards({isLoading, suggestedRecipes}) {
   if (!isLoading && suggestedRecipes != '') {
     // convert string to JSON
-    const recipes = JSON.parse(suggestedRecipes);
+    const suggestedRecipesObj = JSON.parse(suggestedRecipes);
+    const recipeCards = suggestedRecipesObj.recipes.map((recipe, index) => (
+      <div key={index}>
+        <h3>{recipe.name}</h3>
+        <p>{recipe.steps}</p>
+        <p>Cost: £{recipe.cost_in_pound}</p>
+        <ul>
+          {recipe.ingredients.map((ingredient, index) => (
+            <li key={index}>{ingredient.ingredient}: {ingredient.amount}</li>
+          ))}
+        </ul>
+        <p>Time to Cook: {recipe.time_in_mins_to_cook} minutes</p>
+        <br></br>
+        <br></br>
+      </div>
+    ));
 
-    // Extract the recipe details
-    return <div>${suggestedRecipes}</div>
+    // Render the recipe cards
+    return <div>{recipeCards}</div>;
   }
 }
 
