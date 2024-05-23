@@ -98,7 +98,7 @@ function RecipeCards({isLoading, suggestedRecipes}) {
     // convert string to JSON
     const suggestedRecipesObj = JSON.parse(suggestedRecipes);
     const recipeCards = suggestedRecipesObj.recipes.map((recipe, index) => (
-      <div key={index}>
+      <div className="card w-96 bg-base-100 shadow-xl" key={index}>
         <h3>{recipe.name}</h3>
         <p>{recipe.steps}</p>
         <p>Cost: £{recipe.cost_in_pound}</p>
